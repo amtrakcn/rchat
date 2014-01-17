@@ -1,6 +1,6 @@
 class Server
   def initialize
-    @rooms = Array.new(Array.new())
+    @rooms = Array.new(){Array.new()}
   end
 
   def parse(cammand)
