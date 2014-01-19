@@ -1,6 +1,7 @@
 class Server
   def initialize
-    @rooms = Array.new(){Array.new()}
+    @rooms = []
+    create_room("lobby")
   end
 
   def parse(cammand)
@@ -12,5 +13,9 @@ class Server
     else
        self.send(operation)
     end
+  end
+
+  def create_room(name)
+    @rooms << Room.new(name)
   end
 end
