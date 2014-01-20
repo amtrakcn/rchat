@@ -1,19 +1,27 @@
 require 'set'
-include Singleton
 
 class Server
+  attr_accessor :current_connection
+
   def initialize
-    @rooms = Hash.new(Room.new())
+    @rooms = Hash.new()
     create_room("lobby")
     @user_names = Set.new
+    @current_connection = nil
+    @current_user = nil
   end
 
   def excute(cammand)
     operation, value = cammand.split(" ")
     operation = operation[1..-1].downcase.to_sym
 
+    p operation
+    p value
+
     begin
+      puts "try"
       if value
+        puts value
          self.send(operation, value)
       else
          self.send(operation)
@@ -58,8 +66,8 @@ class Server
     if @user_names.include?(name)
       return "Naming confclit"
     else
-      @rooms["lobby"].members << User.new(name)
-      @user_name.add(name)
+      @rooms["lobby"].members << User.new(name, @current_connection, "looby")
+      @user_names.add(name)      
     end
     "User #{name} created"
   end
