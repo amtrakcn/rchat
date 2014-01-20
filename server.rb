@@ -1,5 +1,5 @@
 require 'set'
-require 'singleton'
+include Singleton
 
 class Server
   def initialize
@@ -11,11 +11,15 @@ class Server
   def excute(cammand)
     operation, value = cammand.split(" ")
     operation = operation[1..-1].downcase.to_sym
-    
-    if value
-       self.send(operation, value)
-    else
-       self.send(operation)
+
+    begin
+      if value
+         self.send(operation, value)
+      else
+         self.send(operation)
+      end
+    rescue
+      "invalid cammand"
     end
   end
 
