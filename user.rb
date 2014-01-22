@@ -1,5 +1,5 @@
 class User
-  attr_accessor :user, :connection
+  attr_accessor :user, :connection, room_name
 
   def initialize(name, connection, room_name)
     @name = name
