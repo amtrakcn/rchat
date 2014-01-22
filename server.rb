@@ -17,6 +17,10 @@ class Server
   end
 
   def excute(cammand)
+    if cammand[0] != "/"
+      room(cammand)
+      return
+    end
     operation, value = cammand.split(" ", 2)
     operation = operation[1..-1].downcase.to_sym
 
