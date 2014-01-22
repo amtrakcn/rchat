@@ -9,11 +9,15 @@ loop do
   cammand = ""
   Thread.start(server.accept) do |client|
     chat_service.current_connection = client
+    chat_service.current_user = chat_service.find_user_by_connection(client)
     client.puts "Hello !"
     client.puts "The time now is #{Time.now}"
     until cammand == "/quit"
       cammand = client.gets.chomp
       client.puts(cammand)
+      if cammand[0] == "#"
+        chat_service.private_message(cammand[1..-1])
+      end
       client.puts(chat_service.excute(cammand))
     end
 

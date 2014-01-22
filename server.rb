@@ -1,7 +1,5 @@
-require 'set'
-
 class Server
-  attr_accessor :current_connection
+  attr_accessor :current_connection, :current_user
 
   def initialize
     @rooms = Hash.new()
@@ -11,6 +9,13 @@ class Server
     @current_user = nil
   end
 
+  def find_user_by_connection(connection)
+    @users.each_value do |user|
+      return user if user.connection == connection
+    end
+    nil
+  end
+
   def excute(cammand)
     operation, value = cammand.split(" ", 2)
     operation = operation[1..-1].downcase.to_sym
@@ -18,13 +23,12 @@ class Server
     begin
       puts "try"
       if value
-        puts value
-         self.send(operation, value)
+        self.send(operation, value)
       else
-         self.send(operation)
+        self.send(operation)
       end
-    rescue
-      "invalid cammand"
+    #rescue
+    #  "invalid cammand"
     end
   end
 
@@ -61,8 +65,10 @@ class Server
     if @users.has_key?(name)
       return "Naming confclit"
     else
-      @rooms["lobby"].members << User.new(name, @current_connection, "looby")
+      user = User.new(name, @current_connection, "lobby")
+      @rooms["lobby"].members << user
       @users[name] = user
+      @current_user = user
     end
     "User #{name} created"
   end
@@ -70,23 +76,32 @@ class Server
   def logoff(user)
     @rooms[user.room_name].delete(user)
     @users.delete(user.name)
+    @current_user = nil
     "User #{user.name} logged off"
   end
   
   def list_user
+    puts("rooms are #{@rooms}")
+    puts("#{@current_user.room_name}")
+    puts("members are #{@rooms[@current_user.room_name].members}")
     @rooms[@current_user.room_name].members.each do |single_user|
-      @current_user.puts("*#{single_user.name}")
+      puts("* #{single_user.name}")
+      @current_user.connection.puts("* #{single_user.name}")
     end
+    ""
   end
   
   def room(message)
     @rooms[@current_user.room_name].members.each do |single_user|
       single_user.connection.puts(message)
     end
+    ""
   end
   
-  def private_message(name, message)
+  def private_message(cammand)
+    name, message = cammand.split(" ", 2)
     @users[name].connection.puts(message)
-  def 
+    ""
+  end
 
 end
