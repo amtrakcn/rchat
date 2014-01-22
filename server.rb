@@ -5,18 +5,15 @@ class Server
 
   def initialize
     @rooms = Hash.new()
+    @users = Hash.new()
     create_room("lobby")
-    @user_names = Set.new
     @current_connection = nil
     @current_user = nil
   end
 
   def excute(cammand)
-    operation, value = cammand.split(" ")
+    operation, value = cammand.split(" ", 2)
     operation = operation[1..-1].downcase.to_sym
-
-    p operation
-    p value
 
     begin
       puts "try"
@@ -54,28 +51,42 @@ class Server
   def find(name)
     return "Please specify name of the user you are looking for !" if name.nil?
 
-    @rooms.each do |room|
-      room.members.each do |user|
+    @users.each do |user|
         return user.room_name if user.name == name
-      end
     end
     "Sorry, user #{name} is not online now"
   end
 
   def login(name)
-    if @user_names.include?(name)
+    if @users.has_key?(name)
       return "Naming confclit"
     else
       @rooms["lobby"].members << User.new(name, @current_connection, "looby")
-      @user_names.add(name)      
+      @users[name] = user
     end
     "User #{name} created"
   end
 
   def logoff(user)
     @rooms[user.room_name].delete(user)
-    @user_names.delete(user.name)
+    @users.delete(user.name)
     "User #{user.name} logged off"
   end
+  
+  def list_user
+    @rooms[@current_user.room_name].members.each do |single_user|
+      @current_user.puts("*#{single_user.name}")
+    end
+  end
+  
+  def room(message)
+    @rooms[@current_user.room_name].members.each do |single_user|
+      single_user.connection.puts(message)
+    end
+  end
+  
+  def private_message(name, message)
+    @users[name].connection.puts(message)
+  def 
 
 end
