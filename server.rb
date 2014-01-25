@@ -1,3 +1,5 @@
+require 'debugger'
+
 class Server
   attr_accessor :current_connection, :current_user
 
@@ -31,8 +33,8 @@ class Server
       else
         self.send(operation)
       end
-    #rescue
-    #  "invalid cammand"
+    rescue
+      "invalid cammand"
     end
   end
 
@@ -45,13 +47,13 @@ class Server
     "Room #{name} created"
   end
 
-  def join(room_name, user)
+  def join(room_name)
     if @rooms[room_name].nil?
       return "Room #{room_name} does not exist!"
     else
-      @rooms[room_name].members.add（user）
-      @rooms[user.room_name].members.delete(user)
-      user.room_name = room_name
+      @rooms[room_name].members << @current_user
+      @rooms[@current_user.room_name].members.delete(@current_user)
+      @current_user.room_name = room_name
     end
     "Entered room #{room_name}"
   end
