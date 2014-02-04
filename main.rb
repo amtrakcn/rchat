@@ -14,7 +14,6 @@ loop do
     client.puts "The time now is #{Time.now}"
     until cammand == "/quit"
       cammand = client.gets.chomp
-      client.puts(cammand)
       if cammand[0] == "#"
         chat_service.private_message(cammand[1..-1])
       end
